@@ -30,7 +30,14 @@ button{
     border: none;
     border-radius: 8px;
     cursor: pointer;
+
+    background-color: #333333;
+    color: white;
+
+    transition: background-color 0.2s, transform 0.2s;
 }
+
+
 
 ul{
     padding: 0;
@@ -44,3 +51,48 @@ li{
     border-radius: 8px;
 }
 
+#todo-form{
+    display: flex;
+    gap: 8px;
+}
+
+#todo-input{
+    flex:1;
+}
+
+#todo-list li{
+    display:flex;
+    align-items: cneter;
+    gap:8px;
+}
+
+#todo-list li span{
+    flex:1;
+}
+
+@media(max-width:600px){
+    body{
+        padding:12px;
+    }
+    #todo-form{
+        flex-direction:column;
+    }
+    #todo-list li{
+        flex-wrap: wrap;
+    }
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.completed {
+  color: gray;
+  text-decoration: line-through;
+}
+
+.filters{
+    display:flex;
+    gap:8px;
+    margin-bottom:16px;
+}
