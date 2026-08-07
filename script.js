@@ -2,8 +2,14 @@ const form = document.querySelector("#todo-form");
 const input = document.querySelector("#todo-input");
 const todoList = document.querySelector("#todo-list");
 const todoCount = document.querySelector("#todo-count");
+const remainingCount = document.querySelector("#remaining-count");
+const allButton = document.querySelector("#filter-all");
+const activeButton = document.querySelector("#filter-active");
+const completedButton = document.querySelector("#filter-completed");
+const savedTodos = localStorage.getItem("todos");
 
-let todos = [];
+let currentFilter = "all";
+let todos = savedTodos ? JSON.parse(savedTodos) : [];
 
 function addTodo(title){
     const newTodo = {
@@ -13,6 +19,7 @@ function addTodo(title){
     };
 
     todos.push(newTodo);
+    saveTodos();
     renderTodos();
 }
 
@@ -23,6 +30,7 @@ function toggledTodo(id){
         }
     }
 
+    saveTodos();
     renderTodos();
 }
 
@@ -31,6 +39,7 @@ function deleteTodo(id) {
         return todo.id !== id;
     });
 
+    saveTodos();
     renderTodos();
 }
 
@@ -38,7 +47,27 @@ function renderTodos(){
     todoList.innerHTML = "";
     todoCount.textContent = todos.length;
 
-    for (const todo of todos){
+    const activeTodos = todos.filter(function(todo){
+        return !todo.completed;
+    });
+
+    remainingCount.textContent = activeTodos.length;
+
+    let visibleTodos = todos;
+
+    if(currentFilter === "active"){
+        visibleTodos = todos.filter(function (todo){
+            return !todo.completed;
+        });
+    }
+
+    if(currentFilter === "completed"){
+        visibleTodos = todos.filter(function (todo){
+            return todo.completed;
+        });
+    }
+
+    for (const todo of visibleTodos){
         const li = document.createElement("li");
         const titleSpan = document.createElement("span");
         const completeButton = document.createElement("button");
@@ -73,6 +102,25 @@ function renderTodos(){
     }
 }
 
+function saveTodos(){
+    localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+allButton.addEventListener("click", function(){
+    currentFilter = "all";
+    renderTodos();
+});
+
+activeButton.addEventListener("click", function () {
+    currentFilter = "active";
+    renderTodos();
+});
+
+completedButton.addEventListener("click", function(){
+    currentFilter = "completed";
+    renderTodos();
+});
+
 form.addEventListener("submit", function (event) {
     event.preventDefault();
 
@@ -88,11 +136,10 @@ form.addEventListener("submit", function (event) {
         return;
     }
 
-    console.log("입력한 할 일:", title);
-    console.log(title.length);
-
     addTodo(title);
 
     input.value = "";
     input.focus();
 });
+
+renderTodos();
